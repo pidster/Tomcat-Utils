@@ -26,10 +26,17 @@ import org.apache.catalina.connector.Response;
 import org.apache.catalina.valves.RequestFilterValve;
 
 /**
+ * A simple Valve which processes the User-agent string in a request
+ * against a list of configured regular expressions, in two categories: 
+ * deny and allow.
+ * 
+ * This Valve extends the RequestFilterValve which provides the majority
+ * the functional requirement.
+ * 
  * @author pid
  *
  */
-public class UserAgentValve extends RequestFilterValve {
+public class UserAgentFilterValve extends RequestFilterValve {
 
 	/*
 	 * (non-Javadoc)
@@ -39,9 +46,27 @@ public class UserAgentValve extends RequestFilterValve {
 	public void invoke(Request request, Response response) throws IOException,
 			ServletException {
 
-		String property = "";
+		String property = request.getHeader("User-agent");
 		this.process(property, request, response);
 		
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.apache.catalina.valves.RequestFilterValve#setAllow(java.lang.String)
+	 */
+	@Override
+	public void setAllow(String allow) {
+		super.setAllow(allow);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.apache.catalina.valves.RequestFilterValve#setDeny(java.lang.String)
+	 */
+	@Override
+	public void setDeny(String deny) {
+		super.setDeny(deny);
 	}
 
 }
