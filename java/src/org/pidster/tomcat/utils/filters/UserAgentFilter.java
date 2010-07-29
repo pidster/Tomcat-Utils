@@ -18,6 +18,7 @@
 package org.pidster.tomcat.utils.filters;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -30,8 +31,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * 
- * 
+ * A simple Filter which processes the User-agent string in a request
+ * against a list of configured regular expressions, in two categories: 
+ * deny and allow.
  * 
  * @author pid
  */
@@ -61,47 +63,52 @@ public class UserAgentFilter implements Filter {
 		
 		// check we have actually got a User-agent header
 		if (userAgent == null || userAgent.isEmpty()) {
-			// auto-fail because we can't test without a User-agent		
+			// auto-fail because we can't test without a User-agent
+			deny(hreq, hres);
 		}
 
-		if (denies.length > 0) {
-			for (String deny : denies) {
-				if (userAgent.matches(deny)) {
-					// fail if the regex matches
-					fail(hreq, hres);
-					return;
-				}
+		// test denies
+		for (String deny : denies) {
+			if (userAgent.matches(deny)) {
+				// fail if the regex matches
+				deny(hreq, hres);
+				return;
 			}
-			
+		}
+
+		// test allows
+		for (String allow : allows) {
+			if (userAgent.matches(allow)) {
+				// pass if the regex matches
+				chain.doFilter(hreq, hres);
+				return;
+			}
+		}
+
+        // Allow if denies specified but not allows
+        if ((denies.length > 0) && (allows.length == 0)) {
 			chain.doFilter(hreq, hres);
-		}
-		
-		if (allows.length > 0) {
-			for (String allow : allows) {
-				if (userAgent.matches(allow)) {
-					// pass if the regex matches
-					chain.doFilter(hreq, hres);
-					return;
-				}
-			}
-			
-			// fail if we reach here
-			fail(hreq, hres);
-		}
+            return;
+        }
+
+        // Deny this request
+		deny(hreq, hres);		
 	}
 	
 	/**
 	 * @param hreq
 	 * @param hres
 	 * @throws IOException 
+	 * @throws ServletException 
 	 */
-	private void fail(HttpServletRequest hreq, HttpServletResponse hres) throws IOException {
+	private void deny(HttpServletRequest hreq, HttpServletResponse hres) throws IOException, ServletException {
 		// 
 		if (redirectPage == null || redirectPage.isEmpty()) {
 			hres.sendError(HttpServletResponse.SC_FORBIDDEN);
 		}
-		
-		hres.sendRedirect(hres.encodeRedirectURL(this.redirectPage));
+
+		hreq.setAttribute("deniedURL", URLEncoder.encode(hreq.getRequestURI(), "UTF-8"));
+		hreq.getRequestDispatcher(redirectPage).forward(hreq, hres);
 	}
 
 	/* (non-Javadoc)
