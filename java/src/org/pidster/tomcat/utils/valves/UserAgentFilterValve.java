@@ -33,6 +33,8 @@ import org.apache.catalina.valves.RequestFilterValve;
  * This Valve extends the RequestFilterValve which provides the majority
  * the functional requirement.
  * 
+ * 
+ * 
  * @author pid
  *
  */
@@ -49,24 +51,6 @@ public class UserAgentFilterValve extends RequestFilterValve {
 		String property = request.getHeader("User-agent");
 		this.process(property, request, response);
 		
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.apache.catalina.valves.RequestFilterValve#setAllow(java.lang.String)
-	 */
-	@Override
-	public void setAllow(String allow) {
-		super.setAllow(allow);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.apache.catalina.valves.RequestFilterValve#setDeny(java.lang.String)
-	 */
-	@Override
-	public void setDeny(String deny) {
-		super.setDeny(deny);
 	}
 
 }
