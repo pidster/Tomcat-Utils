@@ -36,6 +36,28 @@ import javax.servlet.http.HttpServletResponse;
  * deny and allow.
  * 
  * @author pid
+ * 
+ * The following are XDoclet attributes, which are sometimes useful 
+ * for explaining the configuration elements required.
+ * 
+ * @web.filter
+ *   name = "UserAgentFilter"
+ *   
+ * @web.filter-mapping
+ *   url-pattern = "/*"
+ *   
+ * @web.filter-init-param
+ *   name = "redirectPage"
+ *   value = "/WEB-INF/error/filter-403.jsp"
+ * 
+ * @web.filter-init-param
+ *   name = "denies"
+ *   value = ".+IE 5\.\d.+,.+IE 6\.0.+"
+ * 
+ * @web.filter-init-param
+ *   name = "allows"
+ *   value = ".+Chrome|Safari|Firefox.+"
+ * 
  */
 public class UserAgentFilter implements Filter {
 	
