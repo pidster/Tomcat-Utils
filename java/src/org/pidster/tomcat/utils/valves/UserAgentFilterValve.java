@@ -31,9 +31,11 @@ import org.apache.catalina.valves.RequestFilterValve;
  * deny and allow.
  * 
  * This Valve extends the RequestFilterValve which provides the majority
- * the functional requirement.
+ * the functional requirement. 
  * 
+ * (http://tomcat.apache.org/tomcat-6.0-doc/api/org/apache/catalina/valves/RequestFilterValve.html)
  * 
+ * @see org.apache.catalina.valves.RequestFilterValve
  * 
  * @author pid
  *
